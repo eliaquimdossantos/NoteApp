@@ -1,3 +1,3 @@
 package com.example.notesapp
 
-data class Message(var id:Long, var title:String, var text:String)
+data class Message(var title:String, var text:String, var id:Long=0L)

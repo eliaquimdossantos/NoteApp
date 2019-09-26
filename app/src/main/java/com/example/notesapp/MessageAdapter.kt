@@ -1,5 +1,7 @@
 package com.example.notesapp
 
+import android.content.Context
+import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,36 +10,39 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.item_message.view.*
 
-class MessageAdapter(
-    private val messages: List<Message>,
-    private val callback:(Message) -> Unit
-) : RecyclerView.Adapter<MessageAdapter.VH>() {
+class MessageAdapter (private val notes: ArrayList <Message>, private val context: Context): RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val v = LayoutInflater
-            .from(parent.context)
-            .inflate(R.layout.item_message, parent, false)
+    var onItemClick: ((Message) -> Unit)? = null
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val noteview = LayoutInflater.from(context).inflate(R.layout.item_message, parent, false)
 
-        val vh = VH(v)
+        return ViewHolder(noteview, context)
+    }
 
-        vh.itemView.setOnClickListener {
-            val message = messages[vh.adapterPosition]
-            callback(message)
+    override fun getItemCount(): Int {
+        return notes.size
+    }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val note = notes[position]
+        holder.title.text = note.title
+        holder.description.text = note.text
+
+    }
+
+    inner class ViewHolder(itemView: View, private val context: Context) : RecyclerView.ViewHolder(itemView){
+
+        val title = itemView.txtTitle
+        val description = itemView.txtText
+        init {
+            itemView.setOnClickListener()
+            {
+//                editListener.editNote(layoutPosition, description.text.toString())
+            }
+            itemView.setOnLongClickListener()
+            {
+//                deleteListener.deleteNote(layoutPosition)
+                true
+            }
         }
-        return vh
-    }
-
-    override fun getItemCount(): Int = messages.size
-
-    override fun onBindViewHolder(holder: VH, position: Int) {
-        val (title, text) = messages[position]
-        holder.txtTitle.text = title
-//        holder.txtText.text = text
-    }
-
-
-    class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val txtTitle: TextView = itemView.txtTitle
-//        val txtText: TextView = itemView.txtText
     }
 }

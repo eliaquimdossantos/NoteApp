@@ -14,8 +14,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private  var messages = mutableListOf<Message>()
-    private var adapter = MessageAdapter(messages, this::onMessageItemClick )
+    private  var messages = ArrayList<Message>()
+    private var adapter = MessageAdapter(messages, this)
+    private var database = SQLiteRepository(this)
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.action,menu)
@@ -46,9 +47,15 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if(resultCode == 10){
-            val title = data!!.getStringExtra("title")
-            val text = data!!.getStringExtra("text")
-            messages.add(Message(title.toString(), text.toString()))
+            var title = "Title note"
+            var text = "Text note"
+            if (data != null) {
+                title = data.getStringExtra("title")
+                text = data.getStringExtra("text")
+            }
+            val message = Message(title, text)
+            database.save(Message(title.toString(), text.toString()))
+            messages.add(message)
             adapter.notifyItemInserted(messages.lastIndex)
         }
     }

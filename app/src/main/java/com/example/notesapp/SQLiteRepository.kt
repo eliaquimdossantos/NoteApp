@@ -94,6 +94,6 @@ class SQLiteRepository (context: Context) : MessageRepository{
         val title = cursor.getString(cursor.getColumnIndex(COLUMN_TITLE))
         val text = cursor.getString(cursor.getColumnIndex(COLUMN_TEXT))
 
-        return Message(id, title, text)
+        return Message(title, text, id)
     }
 }
