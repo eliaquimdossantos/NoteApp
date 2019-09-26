@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditAnnotation"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/noteText"
+        android:layout_width="match_parent"
+        android:layout_height="700dp"
+        android:layout_weight="1"
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_height="50dp"
+        android:layout_width="match_parent">
+
+        <Button
+            android:id="@+id/btnCancelar"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Cancelar" />
+
+        <Button
+            android:id="@+id/btnGravar"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Gravar"
+            android:onClick="editOrCreate"/>
+    </LinearLayout>
+
+</LinearLayout>
