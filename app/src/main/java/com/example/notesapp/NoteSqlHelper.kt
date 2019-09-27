@@ -4,7 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class MessageSqlHelper(context: Context):
+class NoteSqlHelper(context: Context):
     SQLiteOpenHelper(context, DATABASE_NAME,null, DATABASE_VERSION){
 
     override fun onCreate(p0: SQLiteDatabase?) {

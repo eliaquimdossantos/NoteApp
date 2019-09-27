@@ -4,36 +4,36 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 
-class SQLiteRepository (context: Context) : MessageRepository{
-    private val helper = MessageSqlHelper(context)
+class SQLiteRepository (context: Context) : NoteRepository{
+    private val helper = NoteSqlHelper(context)
 
-    private fun insert(message : Message){
+    private fun insert(note : Note){
         val db = helper.writableDatabase
 
         val cv = ContentValues().apply {
-            put(COLUMN_TITLE, message.title)
-            put(COLUMN_TEXT, message.text)
+            put(COLUMN_TITLE, note.title)
+            put(COLUMN_TEXT, note.text)
         }
 
         val id = db.insert(TABLE_NAME, null, cv)
         if(id != -1L){
-            message.id = id
+            note.id = id
         }
 
         db.close()
     }
 
-    override fun save(message: Message) {
-        if (message.id == 0L){
-            insert(message)
+    override fun save(note: Note) {
+        if (note.id == 0L){
+            insert(note)
         } else {
-            update(message)
+            update(note)
         }
     }
 
-    override fun remove(vararg messages: Message) {
+    override fun remove(vararg notes: Note) {
         val db = helper.writableDatabase
-        for (message in messages){
+        for (message in notes){
             db.delete(
                 TABLE_NAME,
                 "$COLUMN_ID = ?",
@@ -43,7 +43,7 @@ class SQLiteRepository (context: Context) : MessageRepository{
         db.close()
     }
 
-    override fun messageById(id: Long, callback: (Message?) -> Unit) {
+    override fun messageById(id: Long, callback: (Note?) -> Unit) {
         val sql = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = ? "
         val db = helper.writableDatabase
         val cursor = db.rawQuery(sql, arrayOf(id.toString()))
@@ -52,7 +52,7 @@ class SQLiteRepository (context: Context) : MessageRepository{
         callback(message)
     }
 
-    override fun search(term: String, callback: (List<Message>) -> Unit) {
+    override fun search(term: String, callback: (List<Note>) -> Unit) {
         var sql = "SELECT * FROM $TABLE_NAME"
         var args: Array<String>? = null
 
@@ -64,36 +64,36 @@ class SQLiteRepository (context: Context) : MessageRepository{
         sql += " ORDER BY $COLUMN_TITLE"
         val db = helper.readableDatabase
         val cursor = db.rawQuery(sql, args)
-        val messages = ArrayList<Message>()
+        val messages = ArrayList<Note>()
         while (cursor.moveToNext()){
             val message = messageFromCursor(cursor)
             messages.add(message)
         }
     }
 
-    private fun update(message: Message){
+    private fun update(note: Note){
         val db = helper.writableDatabase
 
         val cv = ContentValues().apply {
-            put(COLUMN_TITLE, message.title)
-            put(COLUMN_TEXT, message.text)
+            put(COLUMN_TITLE, note.title)
+            put(COLUMN_TEXT, note.text)
         }
 
         db.update(
             TABLE_NAME,
             cv,
             "$COLUMN_ID = ?",
-            arrayOf(message.id.toString())
+            arrayOf(note.id.toString())
         )
 
         db.close()
     }
 
-    private fun messageFromCursor(cursor: Cursor): Message {
+    private fun messageFromCursor(cursor: Cursor): Note {
         val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
         val title = cursor.getString(cursor.getColumnIndex(COLUMN_TITLE))
         val text = cursor.getString(cursor.getColumnIndex(COLUMN_TEXT))
 
-        return Message(title, text, id)
+        return Note(title, text, id)
     }
 }

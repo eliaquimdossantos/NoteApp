@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,8 +13,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private  var messages = ArrayList<Message>()
-    private var adapter = MessageAdapter(messages, this)
+    private  var messages = ArrayList<Note>()
+    private var adapter = NoteAdapter(messages, this, this::onNoteItemClick)
     private var database = SQLiteRepository(this)
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -29,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initRecyclerView()
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -47,14 +45,10 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if(resultCode == 10){
-            var title = "Title note"
-            var text = "Text note"
-            if (data != null) {
-                title = data.getStringExtra("title")
-                text = data.getStringExtra("text")
-            }
-            val message = Message(title, text)
-            database.save(Message(title.toString(), text.toString()))
+            var title = data!!.getStringExtra("title")
+            var text = data!!.getStringExtra("text")
+            val message = Note(title, text)
+            database.save(Note(title.toString(), text.toString()))
             messages.add(message)
             adapter.notifyItemInserted(messages.lastIndex)
         }
@@ -84,28 +78,23 @@ class MainActivity : AppCompatActivity() {
 
         val itemTouchHelper = ItemTouchHelper(swipe)
         itemTouchHelper.attachToRecyclerView(rvMessages)
-
-
     }
-
 
     fun initRecyclerView(){
         rvMessages.adapter = adapter
 
         val layoutMAnager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rvMessages.layoutManager = layoutMAnager
-
-//        initSwipeDelete()
     }
 
     fun addAnnotation(){
-        var intent = Intent(this, EditAnnotation::class.java)
-        intent.putExtra("Title", "")
+        var intent = Intent(this, EditAnnotationActivity::class.java)
+        intent.putExtra("title", "")
         startActivityForResult(intent, 10)
     }
 
-    fun onMessageItemClick(message: Message){
-        val s = "${message.title}\n${message.text}"
+    fun onNoteItemClick(note: Note){
+        val s = "${note.title}\n${note.text}"
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show()
     }
 }

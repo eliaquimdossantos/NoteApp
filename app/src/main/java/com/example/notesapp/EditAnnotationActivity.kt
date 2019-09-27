@@ -5,18 +5,18 @@ import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.activity_edit_annotation.*
 
-class EditAnnotation : AppCompatActivity() {
+class EditAnnotationActivity : AppCompatActivity() {
 
     private var title : String = "";
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_annotation)
-
-//        title = intent.getStringExtra("title")
     }
 
     fun editOrCreate(view: View){
+        title = intent.getStringExtra("title")
+        println("title is" + title)
         if (title == ""){
             createNote()
         } else {
@@ -26,16 +26,14 @@ class EditAnnotation : AppCompatActivity() {
 
     fun editNote(){
         var text = noteText.text.toString()
-//        intent.putExtra("editNote", text)
+        intent.putExtra("text", text)
+        setResult(11,intent)
     }
 
     fun createNote(){
-
+        // Text of annotation
         var text = noteText.text.toString()
-        noteText.text.clear()
-
-        var infos : Array<String> ?= null
-
+        // Show dialog from save
         DialogSave.show(supportFragmentManager, object : DialogSave.OnTextListener {
             override fun onSetTExt(title: String) {
                 intent.putExtra("title", title)
@@ -45,6 +43,5 @@ class EditAnnotation : AppCompatActivity() {
             }
         })
 
-//        intent.putExtra("newNote", infos)
     }
 }

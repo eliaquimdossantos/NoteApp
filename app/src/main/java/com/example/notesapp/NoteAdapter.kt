@@ -1,20 +1,21 @@
 package com.example.notesapp
 
 import android.content.Context
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.activity_main.view.*
-import kotlinx.android.synthetic.main.item_message.view.*
+import kotlinx.android.synthetic.main.item_note.view.*
 
-class MessageAdapter (private val notes: ArrayList <Message>, private val context: Context): RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
+class NoteAdapter (
+    private val notes: ArrayList <Note>,
+    private val context: Context,
+    private val callback:(Note) -> Unit
+): RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
 
-    var onItemClick: ((Message) -> Unit)? = null
+    var onItemClick: ((Note) -> Unit)? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val noteview = LayoutInflater.from(context).inflate(R.layout.item_message, parent, false)
+        val noteview = LayoutInflater.from(context).inflate(R.layout.item_note, parent, false)
 
         return ViewHolder(noteview, context)
     }
