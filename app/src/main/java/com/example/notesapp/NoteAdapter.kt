@@ -10,7 +10,8 @@ import kotlinx.android.synthetic.main.item_note.view.*
 class NoteAdapter (
     private val notes: ArrayList <Note>,
     private val context: Context,
-    private val callback:(Note) -> Unit
+    private val callback:(Note) -> Unit,
+    private val onEdit: OnEdit
 ): RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
 
     var onItemClick: ((Note) -> Unit)? = null
@@ -26,22 +27,20 @@ class NoteAdapter (
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val note = notes[position]
         holder.title.text = note.title
-        holder.description.text = note.text
 
     }
 
     inner class ViewHolder(itemView: View, private val context: Context) : RecyclerView.ViewHolder(itemView){
 
         val title = itemView.txtTitle
-        val description = itemView.txtText
+
         init {
             itemView.setOnClickListener()
             {
-//                editListener.editNote(layoutPosition, description.text.toString())
+                onEdit.editNote(layoutPosition)
             }
             itemView.setOnLongClickListener()
             {
-//                deleteListener.deleteNote(layoutPosition)
                 true
             }
         }

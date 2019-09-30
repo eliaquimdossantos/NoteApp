@@ -52,7 +52,7 @@ class SQLiteRepository (context: Context) : NoteRepository{
         callback(message)
     }
 
-    override fun search(term: String, callback: (List<Note>) -> Unit) {
+    override fun search(term: String, callback: ArrayList<Note>) {
         var sql = "SELECT * FROM $TABLE_NAME"
         var args: Array<String>? = null
 

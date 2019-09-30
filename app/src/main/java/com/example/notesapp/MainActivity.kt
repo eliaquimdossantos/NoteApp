@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
-
-    private  var messages = ArrayList<Note>()
-    private var adapter = NoteAdapter(messages, this, this::onNoteItemClick)
+class MainActivity : AppCompatActivity(), OnEdit {
+    private var notes = ArrayList<Note>()
+    private lateinit var adapter: RecyclerView.Adapter<*>
     private var database = SQLiteRepository(this)
+    private var editIndex = -1
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.action,menu)
@@ -26,6 +26,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        loadAnnotations()
+
+        adapter = NoteAdapter(notes, this, this::onNoteItemClick, this)
 
         initRecyclerView()
     }
@@ -48,14 +52,24 @@ class MainActivity : AppCompatActivity() {
             var title = data!!.getStringExtra("title")
             var text = data!!.getStringExtra("text")
             val message = Note(title, text)
-            database.save(Note(title.toString(), text.toString()))
-            messages.add(message)
-            adapter.notifyItemInserted(messages.lastIndex)
+            notes.add(message)
+            database.save(notes[notes.size-1])
+            adapter.notifyItemInserted(notes.lastIndex)
+        } else if(resultCode == 11){
+            var text = data!!.getStringExtra("text")
+            notes[editIndex].text = text
+            database.save(notes[editIndex])
+            adapter.notifyItemChanged(editIndex)
         }
     }
 
     private fun toast(msg: String){
         Toast.makeText(this,msg,Toast.LENGTH_LONG).show()
+    }
+
+    fun loadAnnotations(){
+        database.search("", notes)
+        println("O FIM : " + notes.lastIndex)
     }
 
     fun initSwipeDelete(){
@@ -70,7 +84,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                messages.removeAt(position)
+                notes.removeAt(position)
                 adapter.notifyItemRemoved(position)
             }
 
@@ -91,6 +105,23 @@ class MainActivity : AppCompatActivity() {
         var intent = Intent(this, EditAnnotationActivity::class.java)
         intent.putExtra("title", "")
         startActivityForResult(intent, 10)
+    }
+
+    override fun editNote(pos: Int) {
+        editIndex = pos
+        var intent = Intent(this, EditAnnotationActivity::class.java)
+        intent.putExtra("title", notes[pos].title)
+        intent.putExtra("text", notes[pos].text)
+        startActivityForResult(intent, 11)
+    }
+
+    fun onLoadData(note: Note){
+        notes.add(note)
+        adapter.notifyItemInserted(notes.lastIndex)
+    }
+
+    fun deleteNote(pos: Int){
+        notes.removeAt(1)
     }
 
     fun onNoteItemClick(note: Note){

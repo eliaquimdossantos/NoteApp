@@ -28,8 +28,6 @@ class DialogSave : DialogFragment() {
             }
         }
 
-        builder.setNegativeButton("Cancelar") { dialogInterface, i -> dismiss() }
-
         val view = activity!!.layoutInflater.inflate(R.layout.fragment_dialog_save, null)
         editText = view.findViewById(R.id.editNome)
         builder.setView(view)

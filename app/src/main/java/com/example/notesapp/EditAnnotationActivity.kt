@@ -12,6 +12,7 @@ class EditAnnotationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_annotation)
+        noteText.setText(intent.getStringExtra("text"))
     }
 
     fun editOrCreate(view: View){
@@ -28,6 +29,7 @@ class EditAnnotationActivity : AppCompatActivity() {
         var text = noteText.text.toString()
         intent.putExtra("text", text)
         setResult(11,intent)
+        finish()
     }
 
     fun createNote(){
