@@ -1,5 +1,6 @@
 package com.example.notesapp
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -13,6 +14,10 @@ class EditAnnotationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_annotation)
         noteText.setText(intent.getStringExtra("text"))
+    }
+
+    fun cancelar(view: View){
+        onBackPressed()
     }
 
     fun editOrCreate(view: View){

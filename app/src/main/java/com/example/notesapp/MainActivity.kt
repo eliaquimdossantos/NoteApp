@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), OnEdit {
+class MainActivity : AppCompatActivity(), OnEdit, OnDelete {
     private var notes = ArrayList<Note>()
     private lateinit var adapter: RecyclerView.Adapter<*>
     private var database = SQLiteRepository(this)
@@ -29,7 +29,9 @@ class MainActivity : AppCompatActivity(), OnEdit {
 
         loadAnnotations()
 
-        adapter = NoteAdapter(notes, this, this::onNoteItemClick, this)
+        notes = database.selectAll()
+
+        adapter = NoteAdapter(notes, this, this::onNoteItemClick, this, this)
 
         initRecyclerView()
     }
@@ -69,7 +71,6 @@ class MainActivity : AppCompatActivity(), OnEdit {
 
     fun loadAnnotations(){
         database.search("", notes)
-        println("O FIM : " + notes.lastIndex)
     }
 
     fun initSwipeDelete(){
@@ -120,8 +121,10 @@ class MainActivity : AppCompatActivity(), OnEdit {
         adapter.notifyItemInserted(notes.lastIndex)
     }
 
-    fun deleteNote(pos: Int){
-        notes.removeAt(1)
+    override fun deleteNote(pos: Int){
+        database.remove(notes[pos])
+        notes.removeAt(pos)
+        adapter.notifyItemRemoved(pos)
     }
 
     fun onNoteItemClick(note: Note){

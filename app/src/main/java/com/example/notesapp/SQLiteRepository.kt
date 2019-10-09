@@ -47,9 +47,23 @@ class SQLiteRepository (context: Context) : NoteRepository{
         val sql = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = ? "
         val db = helper.writableDatabase
         val cursor = db.rawQuery(sql, arrayOf(id.toString()))
-        val message = if (cursor.moveToNext())messageFromCursor(cursor) else null
+        val message = if (cursor.moveToNext())noteFromCursor(cursor) else null
 
         callback(message)
+    }
+
+    fun selectAll(): ArrayList<Note>{
+
+        val db = helper.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $TABLE_NAME", null)
+        val notes = ArrayList<Note>()
+        while (cursor.moveToNext()){
+            val note = noteFromCursor(cursor)
+            notes.add(note)
+        }
+        cursor.close()
+        db.close()
+        return notes
     }
 
     override fun search(term: String, callback: ArrayList<Note>) {
@@ -64,10 +78,10 @@ class SQLiteRepository (context: Context) : NoteRepository{
         sql += " ORDER BY $COLUMN_TITLE"
         val db = helper.readableDatabase
         val cursor = db.rawQuery(sql, args)
-        val messages = ArrayList<Note>()
+        val notes = ArrayList<Note>()
         while (cursor.moveToNext()){
-            val message = messageFromCursor(cursor)
-            messages.add(message)
+            val note = noteFromCursor(cursor)
+            notes.add(note)
         }
     }
 
@@ -89,7 +103,7 @@ class SQLiteRepository (context: Context) : NoteRepository{
         db.close()
     }
 
-    private fun messageFromCursor(cursor: Cursor): Note {
+    private fun noteFromCursor(cursor: Cursor): Note {
         val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
         val title = cursor.getString(cursor.getColumnIndex(COLUMN_TITLE))
         val text = cursor.getString(cursor.getColumnIndex(COLUMN_TEXT))

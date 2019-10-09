@@ -11,7 +11,8 @@ class NoteAdapter (
     private val notes: ArrayList <Note>,
     private val context: Context,
     private val callback:(Note) -> Unit,
-    private val onEdit: OnEdit
+    private val onEdit: OnEdit,
+    private val onDelete: OnDelete
 ): RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
 
     var onItemClick: ((Note) -> Unit)? = null
@@ -41,6 +42,7 @@ class NoteAdapter (
             }
             itemView.setOnLongClickListener()
             {
+                onDelete.deleteNote(layoutPosition)
                 true
             }
         }
